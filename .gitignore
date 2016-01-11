@@ -1,3 +1,6 @@
+# Database config
+/config/database.js
+
 # Build generated files
 /public/assets
 
