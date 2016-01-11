@@ -13,8 +13,41 @@
       mapTypeId: google.maps.MapTypeId.ROADMAP
     };
 
-    new google.maps.Map(document.getElementById('map'), mapOptions);
+    var map = new google.maps.Map(document.getElementById('map'), mapOptions);
+
+    google.maps.event.addListener(map, 'click', function () {
+      $.getJSON('http://localhost:1337/api/weather/dailyForecast?q=Bucharest,ro', function (data) {
+        var html = '<table class="table table-hover">';
+
+        html += '<thead><tr><th>Day</th><th>Night</th><th></th><th></th></tr></thead><tbody>';
+
+        $.each(data.list, function (key, val) {
+          html += '<tr>';
+          html += '<td>' + val.temp.day + '</td>';
+          html += '<td><span class="text-muted">' + val.temp.night + '</span></td>';
+          html += '<td>' + val.weather[0].main + '<br>(' + val.weather[0].description + ')</td>';
+          html += '<td><img src="' + val.weather[0].iconUrl + '"></td>';
+          html += '</tr>';
+        });
+
+        html += '</tbody></table>';
+
+        $('#forecast').html(html);
+      });
+
+      $('a[href="#weather"]').tab('show');
+    });
   };
 
   $.getScript(url);
+
+  $('[data-toggle="tooltip"]').tooltip();
+
+  $('[data-trigger="tab"]').click(function (event) {
+    event.preventDefault();
+
+    var target = $(this).attr('href');
+
+    $('a[href="' + target + '"]').tab('show');
+  });
 })(jQuery);

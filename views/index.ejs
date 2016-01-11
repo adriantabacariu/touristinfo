@@ -2,10 +2,100 @@
 <html lang="en">
   <head>
     <% include includes/head %>
+    <style>
+      body {
+        padding-top: 15px;
+      }
+
+      .container {
+        margin-left: 0;
+      }
+
+      .list-inline.pull-right {
+        margin-right: -5px;
+      }
+    </style>
   </head>
   <body>
     <div class="overlay">
       <div id="map"></div>
+    </div>
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-6 col-lg-4">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">
+                <ul class="list-inline pull-right">
+                  <% if (user.id == 1) { %>
+                    <li>
+                      <a href="#new" data-trigger="tab">
+                        <span class="glyphicon glyphicon-plus" data-toggle="tooltip" data-placement="bottom" title="Add place"></span>
+                      </a>
+                    </li>
+                  <% } %>
+                  <li>
+                    <a href="/logout">
+                      <span class="glyphicon glyphicon-log-out" data-toggle="tooltip" data-placement="bottom" title="Sign out"></span>
+                    </a>
+                  </li>
+                </ul>
+                Tourist Info
+              </h3>
+            </div>
+            <div class="panel-body">
+              <ul class="nav nav-tabs hidden" role="tablist">
+                <li class="active" role="presentation"><a href="#search" aria-controls="search" data-toggle="tab" role="tab">Search</a></li>
+                <li role="presentation"><a href="#new" aria-controls="new" data-toggle="tab" role="tab">Add place</a></li>
+                <li role="presentation"><a href="#weather" aria-controls="Weather" data-toggle="tab" role="tab">Weather</a></li>
+              </ul>
+              <div class="tab-content">
+                <div class="tab-pane fade in active" id="search" role="tabpanel">
+                  <form method="POST">
+                    <div class="form-group">
+                      <label for="query">Find places:</label>
+                      <input type="text" class="form-control" id="query" name="query" placeholder="Search Tourist Info">
+                    </div>
+                    <div class="pull-right">
+                      <button class="btn btn-primary" type="submit">Search</button>
+                    </div>
+                  </form>
+                </div>
+                <div class="tab-pane fade" id="new" role="tabpanel">
+                  <form method="POST">
+                    <div class="form-group">
+                      <label for="name">Name:</label>
+                      <input type="text" class="form-control" id="name" name="name" placeholder="Name">
+                    </div>
+                    <div class="form-group">
+                      <label for="latitude">Latitude:</label>
+                      <input type="text" class="form-control" id="latitude" name="latitude" placeholder="Latitude" disabled>
+                    </div>
+                    <div class="form-group">
+                      <label for="longitude">Longitude:</label>
+                      <input type="text" class="form-control" id="longitude" name="longitude" placeholder="Longitude" disabled>
+                    </div>
+                    <div class="form-group">
+                      <label for="longitude">Description:</label>
+                      <textarea rows="3" class="form-control" id="description" name="description" placeholder="Description"></textarea>
+                    </div>
+                    <div class="pull-right">
+                      <a class="btn btn-default" href="#search" data-trigger="tab">Cancel</a>
+                      <button class="btn btn-success" type="submit">Add place</button>
+                    </div>
+                  </form>
+                </div>
+                <div class="tab-pane fade" id="weather" role="tabpanel">
+                  <div id="forecast"></div>
+                  <div class="pull-right">
+                    <a class="btn btn-default" href="#search" data-trigger="tab">Cancel</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <% include includes/footer %>
   </body>

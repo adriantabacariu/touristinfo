@@ -82,7 +82,6 @@ module.exports = function (grunt) {
     concat: {
       core: {
         src: [
-          'js/handlebars.helpers.js',
           'js/main.js'
         ],
         dest: 'public/assets/app/js/application.js'
@@ -104,7 +103,7 @@ module.exports = function (grunt) {
       assets: {
         expand: true,
         src: 'assets/**',
-        dest: 'html'
+        dest: 'public'
       },
       packages: {
         files: [
@@ -151,9 +150,7 @@ module.exports = function (grunt) {
   grunt.registerTask('assets', 'copy');
   grunt.registerTask('css', ['less', 'postcss', 'csscomb', 'csslint', 'cssmin']);
   grunt.registerTask('js', ['eslint', 'jscs', 'concat', 'uglify']);
-
   grunt.registerTask('build', ['assets', 'css', 'js']);
   grunt.registerTask('test', ['clean', 'build']);
-
   grunt.registerTask('default', 'build');
 };
