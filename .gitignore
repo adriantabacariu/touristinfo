@@ -12,6 +12,8 @@ Thumbs.db
 # Editor generated files
 *.sublime-project
 *.sublime-workspace
+.settings
+.vscode
 
 # Files to ignore
 *.log
