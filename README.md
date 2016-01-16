@@ -9,6 +9,7 @@ $ cp config/database-sample.js config/database.js
 $ vim config/database.js
 $ mysql -u <USERNAME> -p touristinfo < scripts/schema.sql # make sure to create the database first
 $ npm install
+$ npm install -g grunt-cli
 $ grunt build
 $ node server.js
 ```
