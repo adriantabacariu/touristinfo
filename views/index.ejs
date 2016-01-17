@@ -86,31 +86,32 @@
                   </form>
                 </div>
                 <div class="tab-pane fade" id="new" role="tabpanel">
-                  <form method="POST">
+                  <form id="place-data">
                     <div class="form-group">
                       <label for="name">Name:</label>
                       <input type="text" class="form-control" id="name" name="name" placeholder="Name">
                     </div>
                     <div class="form-group">
                       <label for="latitude">Latitude:</label>
-                      <input type="text" class="form-control" id="latitude" name="latitude" placeholder="Latitude" disabled>
+                      <input type="text" class="form-control" id="latitude" name="latitude" placeholder="Latitude" readonly>
                     </div>
                     <div class="form-group">
                       <label for="longitude">Longitude:</label>
-                      <input type="text" class="form-control" id="longitude" name="longitude" placeholder="Longitude" disabled>
+                      <input type="text" class="form-control" id="longitude" name="longitude" placeholder="Longitude" readonly>
                     </div>
                     <div class="form-group">
                       <label for="longitude">Description:</label>
                       <textarea rows="3" class="form-control" id="description" name="description" placeholder="Description"></textarea>
                     </div>
                     <div class="pull-right">
-                      <a class="btn btn-default" href="#search" data-trigger="tab">Close</a>
-                      <button class="btn btn-success" type="submit">Add place</button>
+                      <button type="reset" class="btn btn-default" id="discard-place" data-trigger="tab" data-target="#search">Close</button>
+                      <button type="submit" class="btn btn-success" id="add-place">Add place</button>
                     </div>
                   </form>
                 </div>
                 <div class="tab-pane fade" id="view" role="tabpanel">
                   <h3 class="place-name">Cabana Dolina</h3>
+                  <h4>Description</h4>
                   <p class="text-muted">No description available.</p>
                   <h4>Weather</h4>
                   <p class="text-muted">No forecast available.</p>

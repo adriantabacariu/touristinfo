@@ -11,6 +11,8 @@
       lng: 25.0076595
     },
     instance: {},
+    markers: [],
+    mode: 'view',
     zoom: 7
   };
 })();

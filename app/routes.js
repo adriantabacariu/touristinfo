@@ -31,6 +31,10 @@ module.exports = function (app, passport) {
     });
   });
 
+  app.post('/ajax/places/add', isLoggedIn, function (req, res) {
+    res.send('Place added!');
+  });
+
   app.get('/login', function (req, res) {
     res.render('login.ejs', {
       message: req.flash('loginMessage')
