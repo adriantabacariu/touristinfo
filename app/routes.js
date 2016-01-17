@@ -44,13 +44,29 @@ module.exports = function (app, passport) {
     });
   });
 
-  app.get('/ajax/places/:id', isLoggedIn, function (req, res) {
+  app.get('/ajax/places/:id', isLoggedIn, function (req, res, next) {
     var id = req.params.id;
 
-    res.render('ajax/place.ejs', {
-      forecast: {},
-      name: null
+    connection.query('SELECT * FROM places WHERE id = ?', [id], function (err, rows) {
+      if (err) {
+        res.status(500).send('Something broke!');
+
+        return next();
+      }
+
+      if (!rows.length) {
+        res.status(404).send('Something broke!');
+
+        return next();
+      }
+
+      res.render('ajax/place.ejs', {
+        description: rows[0].description,
+        forecast: {},
+        name: rows[0].name
+      });
     });
+
   });
 
   app.get('/login', function (req, res) {
