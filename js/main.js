@@ -181,9 +181,17 @@
   });
 
   $('#filter-places').on('reset', function () {
-    touristinfo.map.markers = [];
+    $.getJSON('/ajax/places', function (places) {
+      for (var i = touristinfo.map.markers.length - 1; i >= 0; i--) {
+        touristinfo.map.markers[i].setMap(null);
+      }
 
-    touristinfo.map.init();
+      touristinfo.map.markers = [];
+
+      for (i = places.length - 1; i >= 0; i--) {
+        addMarker(places[i]);
+      }
+    });
   });
 
   $('#add-place').submit(function (event) {
