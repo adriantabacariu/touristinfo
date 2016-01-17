@@ -66,18 +66,15 @@ module.exports = function (app, passport) {
         lon: rows[0].longitude
       };
 
-      weather.dailyForecast(query, function (weatherResponse) {
-        console.log(weatherResponse);
-
+      weather.dailyForecast(query, function (data) {
         res.render('ajax/place.ejs', {
+          dayNames: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
           description: rows[0].description,
-          forecast: weatherResponse.list,
+          forecast: data.list,
           name: rows[0].name
         });
       });
-
     });
-
   });
 
   app.get('/login', function (req, res) {
