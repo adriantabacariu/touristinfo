@@ -18,6 +18,7 @@
       for (var i = data.length - 1; i >= 0; i--) {
         (function () {
           var marker = new google.maps.Marker({
+            id: data[i].id,
             map: map,
             position: {
               lat: data[i].latitude,
@@ -29,23 +30,24 @@
           touristinfo.map.markers.push(marker);
 
           marker.addListener('click', function() {
-            switch (touristinfo.map.mode) {
-              case 'explore':
-                marker.setAnimation(google.maps.Animation.BOUNCE);
+            var mode = touristinfo.map.mode;
 
-                touristinfo.map.activeMarker = marker;
+            if ((mode !== 'explore') && (mode !== 'view')) {
+              return;
+            }
 
-                $('a[href="#view"]').tab('show');
+            if (mode === 'view') {
+              touristinfo.map.activeMarker.setAnimation(null);
+            }
 
-                break;
+            marker.setAnimation(google.maps.Animation.BOUNCE);
 
-              case 'view':
-                touristinfo.map.activeMarker.setAnimation(null);
-                marker.setAnimation(google.maps.Animation.BOUNCE);
+            touristinfo.map.activeMarker = marker;
 
-                touristinfo.map.activeMarker = marker;
+            $('#place').load('/ajax/places/' + marker.id);
 
-                break;
+            if (mode === 'explore') {
+              $('a[href="#view"]').tab('show');
             }
           });
         })();
@@ -57,7 +59,7 @@
     autocomplete.bindTo('bounds', map);
 
     map.addListener('click', function (event) {
-      if (touristinfo.map.mode === 'addPlace') {
+      if (touristinfo.map.mode === 'add') {
         var marker = new google.maps.Marker({
           map: map,
           position: event.latLng,
@@ -66,7 +68,7 @@
 
         touristinfo.map.markers.push(marker);
 
-        touristinfo.map.mode = 'placeAdded';
+        touristinfo.map.mode = 'added';
 
         $('#latitude').val(event.latLng.lat);
         $('#longitude').val(event.latLng.lng);
@@ -103,7 +105,7 @@
         break;
 
       case '#new':
-        touristinfo.map.mode = 'addPlace';
+        touristinfo.map.mode = 'add';
 
         for (var i = touristinfo.map.markers.length - 1; i >= 0; i--) {
           touristinfo.map.markers[i].setVisible(false);
@@ -153,9 +155,11 @@
   $('#add-place').click(function (event) {
     event.preventDefault();
 
-    $.post('/ajax/places/add', $('#place-data').serialize(), function () {
+    $.post('/ajax/places/add', $('#place-data').serialize(), function (data) {
       var n = touristinfo.map.markers.length - 1;
       var marker = touristinfo.map.markers[n];
+
+      marker.id = data;
 
       marker.setDraggable(false);
       marker.setAnimation(google.maps.Animation.BOUNCE);

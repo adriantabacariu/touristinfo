@@ -110,32 +110,7 @@
                   </form>
                 </div>
                 <div class="tab-pane fade" id="view" role="tabpanel">
-                  <h3 class="place-name">Cabana Dolina</h3>
-                  <h4>Description</h4>
-                  <p class="text-muted">No description available.</p>
-                  <h4>Weather</h4>
-                  <p class="text-muted">No forecast available.</p>
-                  <div id="forecast"></div>
-                  <h4>Reviews</h4>
-                  <div id="disqus_thread"></div>
-                  <script>
-                    // var disqus_config = function () {
-                    //   this.page.url = PAGE_URL;
-                    //   this.page.identifier = PAGE_IDENTIFIER;
-                    // };
-
-                    (function() {
-                      var d = document;
-                      var s = d.createElement('script');
-
-                      s.src = '//kaspersky91.disqus.com/embed.js';
-
-                      s.setAttribute('data-timestamp', + new Date());
-
-                      (d.head || d.body).appendChild(s);
-                    })();
-                  </script>
-                  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus</a>.</noscript>
+                  <div id="place"></div>
                   <div class="pull-right">
                     <a class="btn btn-default" href="#search" data-trigger="tab">Close</a>
                   </div>

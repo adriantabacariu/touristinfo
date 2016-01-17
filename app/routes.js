@@ -11,16 +11,6 @@ module.exports = function (app, passport) {
     });
   });
 
-  app.get('/ajax/forecast/:latitude/:longitude', isLoggedIn, function (req, res) {
-    var latitude = req.params.latitude;
-    var longitude = req.params.longitude;
-    var forecast = {};
-
-    res.render('ajax/forecast.ejs', {
-      forecast: forecast
-    });
-  });
-
   app.get('/ajax/places', function (req, res, next) {
     connection.query('SELECT * FROM places', function (err, rows) {
       if (err) {
@@ -50,7 +40,16 @@ module.exports = function (app, passport) {
         return next();
       }
 
-      res.send('Place successfully added!');
+      res.send(JSON.stringify(rows.insertId));
+    });
+  });
+
+  app.get('/ajax/places/:id', isLoggedIn, function (req, res) {
+    var id = req.params.id;
+
+    res.render('ajax/place.ejs', {
+      forecast: {},
+      name: null
     });
   });
 

@@ -1,0 +1,53 @@
+<h3 class="place-name"><%= name %></h3>
+<h4>Description</h4>
+<% if (locals.description) { %>
+  <p><%= description %></p>
+<% } else { %>
+  <p class="text-muted">No description available.</p>
+<% } %>
+<h4>Weather</h4>
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th>Day</th>
+      <th>Night</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% for (var i = forecast.length - 1; i >= 0; i--) { %>
+      <tr>
+        <td><%= forecast[i].temp.day %>&#8451;</td>
+        <td class="text-muted"><%= forecast[i].temp.night %>&#8451;</td>
+        <td>
+          <%= forecast[i].weather[0].main %>
+          <br>
+          (<%= forecast[i].weather[0].description %>)
+        </td>
+        <td><img src="<%= forecast[i].weather[0].iconUrl %>"></td>
+      </tr>
+    <% } %>
+  </tbody>
+</table>
+<div id="forecast"></div>
+<h4>Reviews</h4>
+<div id="disqus_thread"></div>
+<script>
+  // var disqus_config = function () {
+  //   this.page.url = PAGE_URL;
+  //   this.page.identifier = PAGE_IDENTIFIER;
+  // };
+
+  (function() {
+    var d = document;
+    var s = d.createElement('script');
+
+    s.src = '//kaspersky91.disqus.com/embed.js';
+
+    s.setAttribute('data-timestamp', + new Date());
+
+    (d.head || d.body).appendChild(s);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus</a>.</noscript>
