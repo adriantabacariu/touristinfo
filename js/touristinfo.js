@@ -7,6 +7,7 @@
 
   touristinfo.map = {
     activeMarker: null,
+    autocomplete: {},
     center: {
       lat: 46.0139738,
       lng: 25.0076595

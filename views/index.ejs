@@ -48,7 +48,7 @@
               </ul>
               <div class="tab-content">
                 <div class="tab-pane fade in active" id="search" role="tabpanel">
-                  <form>
+                  <form id="filter-places">
                     <div class="form-group">
                       <label for="query">Find places:</label>
                       <input type="text" class="form-control" id="query" name="query" placeholder="Search Tourist Info">
@@ -81,12 +81,13 @@
                       </div>
                     </div>
                     <div class="pull-right">
+                      <button type="reset" class="btn btn-default">Reset</button>
                       <button type="submit" class="btn btn-primary">Search</button>
                     </div>
                   </form>
                 </div>
                 <div class="tab-pane fade" id="new" role="tabpanel">
-                  <form id="place-data">
+                  <form id="add-place">
                     <div class="form-group">
                       <label for="name">Name:</label>
                       <input type="text" class="form-control" id="name" name="name" placeholder="Name">
@@ -105,7 +106,7 @@
                     </div>
                     <div class="pull-right">
                       <button type="reset" class="btn btn-default" id="discard-place" data-trigger="tab" data-target="#search">Close</button>
-                      <button type="submit" class="btn btn-success" id="add-place">Add place</button>
+                      <button type="submit" class="btn btn-success">Add place</button>
                     </div>
                   </form>
                 </div>

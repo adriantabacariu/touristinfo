@@ -3,6 +3,43 @@
 
   var url = 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places&callback=touristinfo.map.init';
   var map = touristinfo.map.instance;
+  var autocomplete = touristinfo.map.autocomplete;
+
+  function addMarker(place) {
+    var marker = new google.maps.Marker({
+      id: place.id,
+      map: map,
+      position: {
+        lat: place.latitude,
+        lng: place.longitude
+      },
+      title: place.name
+    });
+
+    touristinfo.map.markers.push(marker);
+
+    marker.addListener('click', function() {
+      var mode = touristinfo.map.mode;
+
+      if ((mode !== 'explore') && (mode !== 'view')) {
+        return;
+      }
+
+      if (mode === 'view') {
+        touristinfo.map.activeMarker.setAnimation(null);
+      }
+
+      marker.setAnimation(google.maps.Animation.BOUNCE);
+
+      touristinfo.map.activeMarker = marker;
+
+      $('#place').load('/ajax/places/' + marker.id);
+
+      if (mode === 'explore') {
+        $('a[href="#view"]').tab('show');
+      }
+    });
+  }
 
   touristinfo.map.init = function () {
     var mapOptions = {
@@ -14,47 +51,13 @@
 
     map = new google.maps.Map($('#map')[0], mapOptions);
 
-    $.getJSON('/ajax/places', function (data) {
-      for (var i = data.length - 1; i >= 0; i--) {
-        (function () {
-          var marker = new google.maps.Marker({
-            id: data[i].id,
-            map: map,
-            position: {
-              lat: data[i].latitude,
-              lng: data[i].longitude
-            },
-            title: data[i].name
-          });
-
-          touristinfo.map.markers.push(marker);
-
-          marker.addListener('click', function() {
-            var mode = touristinfo.map.mode;
-
-            if ((mode !== 'explore') && (mode !== 'view')) {
-              return;
-            }
-
-            if (mode === 'view') {
-              touristinfo.map.activeMarker.setAnimation(null);
-            }
-
-            marker.setAnimation(google.maps.Animation.BOUNCE);
-
-            touristinfo.map.activeMarker = marker;
-
-            $('#place').load('/ajax/places/' + marker.id);
-
-            if (mode === 'explore') {
-              $('a[href="#view"]').tab('show');
-            }
-          });
-        })();
+    $.getJSON('/ajax/places', function (places) {
+      for (var i = places.length - 1; i >= 0; i--) {
+        addMarker(places[i]);
       }
     });
 
-    var autocomplete = new google.maps.places.Autocomplete($('#query')[0]);
+    autocomplete = new google.maps.places.Autocomplete($('#query')[0]);
 
     autocomplete.bindTo('bounds', map);
 
@@ -146,28 +149,66 @@
     }
   });
 
+  $('#filter-places').submit(function (event) {
+    event.preventDefault();
+
+    var place = autocomplete.getPlace();
+
+    if (!place.geometry) {
+      window.alert('Autocomplete\'s returned place contains no geometry.');
+
+      return;
+    }
+
+    var data = {
+      distance: $('#distance').val(),
+      latitude: place.geometry.location.lat(),
+      longitude: place.geometry.location.lng(),
+      radius: $('#radius').val()
+    };
+
+    $.post('/ajax/places/filter', data, function (places) {
+      for (var i = touristinfo.map.markers.length - 1; i >= 0; i--) {
+        touristinfo.map.markers[i].setMap(null);
+      }
+
+      touristinfo.map.markers = [];
+
+      for (i = places.length - 1; i >= 0; i--) {
+        addMarker(places[i]);
+      }
+    });
+  });
+
+  $('#filter-places').on('reset', function () {
+    touristinfo.map.markers = [];
+
+    touristinfo.map.init();
+  });
+
+  $('#add-place').submit(function (event) {
+    event.preventDefault();
+
+    $.post('/ajax/places/add', $('#add-place').serialize(), function (id) {
+      var n = touristinfo.map.markers.length - 1;
+      var marker = touristinfo.map.markers[n];
+
+      marker.id = id;
+
+      marker.setDraggable(false);
+      marker.setAnimation(google.maps.Animation.BOUNCE);
+      marker.setTitle($('#name').val());
+
+      touristinfo.map.activeMarker = marker;
+
+      $('#add-place').trigger('reset');
+      $('a[href="#view"]').tab('show');
+    });
+  });
+
   $('#discard-place').click(function () {
     var marker = touristinfo.map.markers.pop();
 
     marker.setMap(null);
-  });
-
-  $('#add-place').click(function (event) {
-    event.preventDefault();
-
-    $.post('/ajax/places/add', $('#place-data').serialize(), function (data) {
-      var n = touristinfo.map.markers.length - 1;
-      var marker = touristinfo.map.markers[n];
-
-      marker.id = data;
-
-      marker.setDraggable(false);
-      marker.setAnimation(google.maps.Animation.BOUNCE);
-
-      touristinfo.map.activeMarker = marker;
-
-      $('#place-data').trigger('reset');
-      $('a[href="#view"]').tab('show');
-    });
   });
 })(jQuery);
