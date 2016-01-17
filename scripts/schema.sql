@@ -29,7 +29,7 @@ CREATE TABLE `places` (
   `longitude` float(10,6) NOT NULL,
   `description` text COLLATE utf8_unicode_ci,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -38,6 +38,7 @@ CREATE TABLE `places` (
 
 LOCK TABLES `places` WRITE;
 /*!40000 ALTER TABLE `places` DISABLE KEYS */;
+INSERT INTO `places` VALUES (1,'Cabana Colț',45.096790,22.741699,NULL),(2,'Cabana Alpin',45.236217,23.378906,NULL),(3,'Cabana Ghețar',45.274887,23.972168,NULL),(4,'Cabana Brâna',45.305801,24.960938,NULL),(5,'Camping Fereastra',45.305801,25.642090,NULL),(6,'Refugiu Canion',45.690834,26.488037,NULL),(7,'Cabana Creasta',46.027481,26.345215,NULL),(8,'Camping Padina',46.521076,26.433105,NULL),(9,'Camping Curmătura',47.159840,26.147461,NULL),(10,'Camping Cascada',47.331375,25.817871,NULL),(11,'Cabana Dolina',46.995239,25.653076,NULL),(12,'Cabana Peștera',46.912750,26.389160,NULL),(13,'Camping Cumpăna',46.822617,25.949707,NULL),(14,'Refugiu Coama',46.324173,25.993652,NULL),(15,'Camping Dorna',45.836452,26.136475,NULL),(16,'Camping Cheia',45.560219,25.894775,NULL),(17,'Cabana Izvor',45.383018,25.257568,NULL),(18,'Cabana Măgura',45.614037,24.027100,NULL),(19,'Refugiu Escalada',45.475540,23.686523,NULL),(20,'Camping Arcada',45.521744,23.049316,NULL);
 /*!40000 ALTER TABLE `places` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -77,4 +78,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-01-17  1:47:20
+-- Dump completed on 2016-01-17  2:01:46
