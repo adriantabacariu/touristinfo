@@ -219,4 +219,10 @@
 
     marker.setMap(null);
   });
+
+  $('#query').keydown(function (event) {
+    if (event.which == 13 && $('.pac-container:visible').length) {
+      return false;
+    }
+  });
 })(jQuery);
