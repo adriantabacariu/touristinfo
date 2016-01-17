@@ -1,3 +1,4 @@
+var weather = require('./weather');
 var dbconfig = require('../config/database');
 var mysql = require('mysql');
 var connection = mysql.createConnection(dbconfig.connection);
@@ -60,11 +61,21 @@ module.exports = function (app, passport) {
         return next();
       }
 
-      res.render('ajax/place.ejs', {
-        description: rows[0].description,
-        forecast: {},
-        name: rows[0].name
+      var query = {
+        lat: rows[0].latitude,
+        lon: rows[0].longitude
+      };
+
+      weather.dailyForecast(query, function (weatherResponse) {
+        console.log(weatherResponse);
+
+        res.render('ajax/place.ejs', {
+          description: rows[0].description,
+          forecast: weatherResponse.list,
+          name: rows[0].name
+        });
       });
+
     });
 
   });
