@@ -210,6 +210,7 @@
       touristinfo.map.activeMarker = marker;
 
       $('#add-place').trigger('reset');
+      $('#place').load('/ajax/places/' + marker.id);
       $('a[href="#view"]').tab('show');
     });
   });
