@@ -2,16 +2,22 @@ body {
   height: 100%;
 }
 
+.body {
+  height: 100vh;
+  overflow: scroll;
+  padding-top: 20px;
+}
+
 .overlay {
   bottom: 0;
   left: 0;
   position: absolute;
   right: 0;
   top: 0;
-}
 
-.fill {
-  background-color: rgba(255, 255, 255, 0.9);
+  &.fill {
+    background-color: rgba(255, 255, 255, 0.9);
+  }
 }
 
 #map {
@@ -29,10 +35,6 @@ body {
   }
 }
 
-#disqus_thread {
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 0;
-    z-index: 1000;
-    position: absolute;
+.place-name {
+  margin-top: 0;
 }

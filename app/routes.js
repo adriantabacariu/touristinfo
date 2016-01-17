@@ -1,7 +1,33 @@
+var dbconfig = require('../config/database');
+var mysql = require('mysql');
+var connection = mysql.createConnection(dbconfig.connection);
+
+connection.query('USE ' + dbconfig.database);
+
 module.exports = function (app, passport) {
   app.get('/', isLoggedIn, function(req, res) {
     res.render('index.ejs', {
       user: req.user
+    });
+  });
+
+  app.get('/ajax/forecast/:latitude/:longitude', isLoggedIn, function (req, res) {
+    var latitude = req.params.latitude;
+    var longitude = req.params.longitude;
+    var forecast = {};
+
+    res.render('ajax/forecast.ejs', {
+      forecast: forecast
+    });
+  });
+
+  app.get('/ajax/places', function (req, res) {
+    connection.query('SELECT * FROM places', function (err, rows) {
+      if (err) {
+        res.status(500).send('Something broke!');
+      }
+
+      res.send(JSON.stringify(rows));
     });
   });
 

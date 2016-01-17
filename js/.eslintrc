@@ -5,7 +5,8 @@
   },
   "extends": "eslint:recommended",
   "globals": {
-    "google": false
+    "google": false,
+    "touristinfo": true
   },
   "parser": "babel-eslint",
   "root": true

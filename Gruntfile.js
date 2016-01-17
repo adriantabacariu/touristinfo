@@ -82,6 +82,7 @@ module.exports = function (grunt) {
     concat: {
       core: {
         src: [
+          'js/touristinfo.js',
           'js/main.js'
         ],
         dest: 'public/assets/app/js/application.js'
