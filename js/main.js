@@ -114,6 +114,12 @@
       case '#view':
         touristinfo.map.mode = 'explore';
 
+        if (touristinfo.map.activeMarker !== null) {
+          touristinfo.map.activeMarker.setAnimation(null);
+
+          touristinfo.map.activeMarker = null;
+        }
+
         break;
     }
   });
@@ -133,6 +139,8 @@
 
       marker.setDraggable(false);
       marker.setAnimation(google.maps.Animation.BOUNCE);
+
+      touristinfo.map.activeMarker = marker;
 
       $('#place-data').trigger('reset');
       $('a[href="#view"]').tab('show');

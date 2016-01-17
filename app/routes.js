@@ -21,18 +21,37 @@ module.exports = function (app, passport) {
     });
   });
 
-  app.get('/ajax/places', function (req, res) {
+  app.get('/ajax/places', function (req, res, next) {
     connection.query('SELECT * FROM places', function (err, rows) {
       if (err) {
         res.status(500).send('Something broke!');
+
+        return next();
       }
 
       res.send(JSON.stringify(rows));
     });
   });
 
-  app.post('/ajax/places/add', isLoggedIn, function (req, res) {
-    res.send('Place added!');
+  app.post('/ajax/places/add', isLoggedIn, function (req, res, next) {
+    if (req.user.id !== 1) {
+      res.status(403).send('Forbidden!');
+
+      return next();
+    }
+
+    connection.query('INSERT INTO places VALUES (NULL, ?, ?, ?, ?)', [
+      req.body.name, req.body.latitude, req.body.longitude, req.body.description
+    ],
+    function (err, rows) {
+      if (err) {
+        res.status(500).send('Something broke!');
+
+        return next();
+      }
+
+      res.send('Place successfully added!');
+    });
   });
 
   app.get('/login', function (req, res) {
