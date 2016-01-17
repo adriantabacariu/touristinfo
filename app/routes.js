@@ -41,7 +41,7 @@ module.exports = function (app, passport) {
     }
 
     connection.query('INSERT INTO places VALUES (NULL, ?, ?, ?, ?)', [
-      req.body.name, req.body.latitude, req.body.longitude, req.body.description
+      req.body.name, req.body.latitude, req.body.longitude, req.body.description || null
     ],
     function (err, rows) {
       if (err) {

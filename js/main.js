@@ -16,16 +16,39 @@
 
     $.getJSON('/ajax/places', function (data) {
       for (var i = data.length - 1; i >= 0; i--) {
-        var marker = new google.maps.Marker({
-          map: map,
-          position: {
-            lat: data[i].latitude,
-            lng: data[i].longitude
-          },
-          title: data[i].name
-        });
+        (function () {
+          var marker = new google.maps.Marker({
+            map: map,
+            position: {
+              lat: data[i].latitude,
+              lng: data[i].longitude
+            },
+            title: data[i].name
+          });
 
-        touristinfo.map.markers.push(marker);
+          touristinfo.map.markers.push(marker);
+
+          marker.addListener('click', function() {
+            switch (touristinfo.map.mode) {
+              case 'explore':
+                marker.setAnimation(google.maps.Animation.BOUNCE);
+
+                touristinfo.map.activeMarker = marker;
+
+                $('a[href="#view"]').tab('show');
+
+                break;
+
+              case 'view':
+                touristinfo.map.activeMarker.setAnimation(null);
+                marker.setAnimation(google.maps.Animation.BOUNCE);
+
+                touristinfo.map.activeMarker = marker;
+
+                break;
+            }
+          });
+        })();
       }
     });
 
@@ -33,7 +56,7 @@
 
     autocomplete.bindTo('bounds', map);
 
-    google.maps.event.addListener(map, 'click', function (event) {
+    map.addListener('click', function (event) {
       if (touristinfo.map.mode === 'addPlace') {
         var marker = new google.maps.Marker({
           map: map,
@@ -48,7 +71,7 @@
         $('#latitude').val(event.latLng.lat);
         $('#longitude').val(event.latLng.lng);
 
-        google.maps.event.addListener(marker, 'dragend', function (event) {
+        marker.addListener('dragend', function (event) {
           $('#latitude').val(event.latLng.lat);
           $('#longitude').val(event.latLng.lng);
         });
@@ -99,9 +122,6 @@
     var target = $(event.target).attr('href');
 
     switch (target) {
-      case '#search':
-        break;
-
       case '#new':
         touristinfo.map.mode = 'explore';
 

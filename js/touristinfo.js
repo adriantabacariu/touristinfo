@@ -13,7 +13,7 @@
     },
     instance: {},
     markers: [],
-    mode: 'view',
+    mode: 'explore',
     zoom: 7
   };
 })();
