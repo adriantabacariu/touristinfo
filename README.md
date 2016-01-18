@@ -5,8 +5,8 @@
 ```
 $ git clone https://github.com/cdog/touristinfo.git
 $ cd touristinfo
-$ cp config/database-sample.js config/database.js
-$ vim config/database.js
+$ cp config/settings-sample.js config/settings.js
+$ vim config/settings.js
 $ mysql -u <USERNAME> -p <DATABASE> < scripts/schema.sql # make sure to create the database first
 $ npm install -g grunt-cli
 $ npm install

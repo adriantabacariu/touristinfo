@@ -1,9 +1,7 @@
 var weather = require('./weather');
-var dbconfig = require('../config/database');
+var config = require('../config/settings');
 var mysql = require('mysql');
-var connection = mysql.createConnection(dbconfig.connection);
-
-connection.query('USE ' + dbconfig.database);
+var connection = mysql.createConnection(config.db.connection);
 
 module.exports = function (app, passport) {
   app.get('/', isLoggedIn, function(req, res) {
@@ -13,7 +11,7 @@ module.exports = function (app, passport) {
   });
 
   app.get('/ajax/places', function (req, res, next) {
-    connection.query('SELECT * FROM places', function (err, rows) {
+    connection.query('SELECT * FROM ' + config.db.tables.places, function (err, rows) {
       if (err) {
         res.status(500).send('Something broke!');
 
@@ -25,7 +23,7 @@ module.exports = function (app, passport) {
   });
 
   app.post('/ajax/places/filter', function (req, res, next) {
-    connection.query('SELECT id, name, latitude, longitude, (? * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance FROM places HAVING distance < ?', [
+    connection.query('SELECT id, name, latitude, longitude, (? * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance FROM ' + config.db.tables.places + ' HAVING distance < ?', [
       req.body.distance === 'mi' ? 3959 : 6371, req.body.latitude, req.body.longitude, req.body.latitude, req.body.radius
     ], function (err, rows) {
       if (err) {
@@ -45,7 +43,7 @@ module.exports = function (app, passport) {
       return next();
     }
 
-    connection.query('INSERT INTO places VALUES (NULL, ?, ?, ?, ?)', [
+    connection.query('INSERT INTO ' + config.db.tables.places + ' VALUES (NULL, ?, ?, ?, ?)', [
       req.body.name, req.body.latitude, req.body.longitude, req.body.description || null
     ],
     function (err, rows) {
@@ -62,7 +60,7 @@ module.exports = function (app, passport) {
   app.get('/ajax/places/:id', isLoggedIn, function (req, res, next) {
     var id = req.params.id;
 
-    connection.query('SELECT * FROM places WHERE id = ?', [id], function (err, rows) {
+    connection.query('SELECT * FROM ' + config.db.tables.places + ' WHERE id = ?', [id], function (err, rows) {
       if (err) {
         res.status(500).send('Something broke!');
 

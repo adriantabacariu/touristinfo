@@ -1,10 +1,8 @@
 var bcrypt = require('bcrypt-nodejs');
-var dbconfig = require('./database');
+var config = require('./settings');
 var mysql = require('mysql');
-var connection = mysql.createConnection(dbconfig.connection);
+var connection = mysql.createConnection(config.db.connection);
 var LocalStrategy = require('passport-local').Strategy;
-
-connection.query('USE ' + dbconfig.database);
 
 module.exports = function (passport) {
   passport.serializeUser(function (user, done) {
@@ -12,7 +10,7 @@ module.exports = function (passport) {
   });
 
   passport.deserializeUser(function (id, done) {
-    connection.query('SELECT * FROM users WHERE id = ?', [id], function (err, rows) {
+    connection.query('SELECT * FROM ' + config.db.tables.users + ' WHERE id = ?', [id], function (err, rows) {
       done(err, rows[0]);
     });
   });
@@ -23,7 +21,7 @@ module.exports = function (passport) {
     usernameField: 'username'
   },
   function (req, username, password, done) {
-    connection.query('SELECT * FROM users WHERE username = ?', [username], function (err, rows) {
+    connection.query('SELECT * FROM ' + config.db.tables.users + ' WHERE username = ?', [username], function (err, rows) {
       if (err) {
         return done(err);
       }
@@ -36,7 +34,7 @@ module.exports = function (passport) {
           username: username
         };
 
-        var insertQuery = 'INSERT INTO users (username, password) VALUES (?, ?)';
+        var insertQuery = 'INSERT INTO ' + config.db.tables.users + ' (username, password) VALUES (?, ?)';
 
         connection.query(insertQuery, [newUserMysql.username, newUserMysql.password], function (err, rows) {
           newUserMysql.id = rows.insertId;
@@ -53,7 +51,7 @@ module.exports = function (passport) {
     usernameField: 'username'
   },
   function (req, username, password, done) {
-    connection.query('SELECT * FROM users WHERE username = ?', [username], function (err, rows) {
+    connection.query('SELECT * FROM ' + config.db.tables.users + ' WHERE username = ?', [username], function (err, rows) {
       if (err) {
         return done(err);
       }

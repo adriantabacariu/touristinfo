@@ -1,5 +1,5 @@
-# Database config
-/config/database.js
+# Configuration settings
+/config/settings.js
 
 # Build generated files
 /public/assets
