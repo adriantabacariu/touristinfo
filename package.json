@@ -12,6 +12,10 @@
     "url": "git+https://github.com/cdog/touristinfo.git"
   },
   "author": "Cătălin Dogaru",
+  "contributors": [
+    "Adrian Tabacariu",
+    "Vladimir Cernov"
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/cdog/touristinfo/issues"
