@@ -1,7 +1,7 @@
-var weather = require('./weather');
 var config = require('../config/settings');
 var mysql = require('mysql');
 var connection = mysql.createConnection(config.db.connection);
+var weather = require('./weather');
 
 module.exports = function (app, passport) {
   app.get('/', isLoggedIn, function(req, res) {

@@ -1,5 +1,5 @@
-var bcrypt = require('bcrypt-nodejs');
 var config = require('./settings');
+var bcrypt = require('bcrypt-nodejs');
 var mysql = require('mysql');
 var connection = mysql.createConnection(config.db.connection);
 var LocalStrategy = require('passport-local').Strategy;
