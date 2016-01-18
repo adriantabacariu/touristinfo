@@ -28,16 +28,16 @@
 <h4>Reviews</h4>
 <div id="disqus_thread"></div>
 <script>
-  // var disqus_config = function () {
-  //   this.page.url = PAGE_URL;
-  //   this.page.identifier = PAGE_IDENTIFIER;
-  // };
+  var disqus_config = function () {
+    this.page.url = window.location.href;
+    this.page.identifier = <%= id %>;
+  };
 
   (function() {
     var d = document;
     var s = d.createElement('script');
 
-    s.src = '//kaspersky91.disqus.com/embed.js';
+    s.src = '//<%= disqus.shortname %>.disqus.com/embed.js';
 
     s.setAttribute('data-timestamp', + new Date());
 

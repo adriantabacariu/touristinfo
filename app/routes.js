@@ -82,7 +82,9 @@ module.exports = function (app, passport) {
         res.render('ajax/place.ejs', {
           dayNames: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
           description: rows[0].description,
+          disqus: config.disqus,
           forecast: data.list,
+          id: id,
           name: rows[0].name
         });
       });
