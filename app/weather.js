@@ -18,7 +18,7 @@ var config = require('../config/settings');
 	//queryEx: var query = {id: 524901};
 	//Find: current weather for city
 	exports.currentWeather = function (query, callback) {
-		var openWeatherPath = "/data/2.5/forecast/find?";
+		var openWeatherPath = "/data/2.5/weather?";
 		doListQuery(query, openWeatherPath, callback);
 	};
 

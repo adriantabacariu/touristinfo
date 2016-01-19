@@ -1,4 +1,5 @@
 var config = require('../config/settings');
+var async = require('async');
 var mysql = require('mysql');
 var connection = mysql.createConnection(config.db.connection);
 var weather = require('./weather');
@@ -73,19 +74,35 @@ module.exports = function (app, passport) {
         return next();
       }
 
-      var query = {
-        lat: rows[0].latitude,
-        lon: rows[0].longitude
-      };
+      async.parallel([
+        function (callback) {
+          var params = {
+            lat: rows[0].latitude,
+            lon: rows[0].longitude
+          };
 
-      weather.dailyForecast(query, function (data) {
+          weather.currentWeather(params, function (data) {
+            callback(null, data);
+          });
+        },
+        function (callback) {
+          var params = {
+            lat: rows[0].latitude,
+            lon: rows[0].longitude
+          };
+
+          weather.dailyForecast(params, function (data) {
+            callback(null, data);
+          });
+        },
+      ],
+      function (err, results) {
         res.render('ajax/place.ejs', {
           dayNames: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-          description: rows[0].description,
           disqus: config.disqus,
-          forecast: data.list,
-          id: id,
-          name: rows[0].name
+          forecast: results[1],
+          place: rows[0],
+          weather: results[0]
         });
       });
     });

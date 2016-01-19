@@ -88,6 +88,13 @@
 
   $('[data-toggle="tooltip"]').tooltip();
 
+  $('#view').tooltip({
+    container: 'body',
+    html: true,
+    placement: 'right',
+    selector: '[data-toggle="tooltip"]'
+  });
+
   $('[data-trigger="tab"]').click(function (event) {
     if ($(this).is('a')) {
       event.preventDefault();

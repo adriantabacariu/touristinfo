@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/cdog/touristinfo#readme",
   "dependencies": {
+    "async": "^1.5.2",
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.14.2",
     "bootstrap": "^3.3.6",

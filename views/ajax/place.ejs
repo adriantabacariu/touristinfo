@@ -1,25 +1,33 @@
-<h3 class="place-name"><%= name %></h3>
+<h3 class="place-name"><%= place.name %></h3>
 <h4>Description</h4>
-<% if (locals.description) { %>
-  <p><%= description %></p>
+<% if (locals.place.description) { %>
+  <p><%= place.description %></p>
 <% } else { %>
   <p class="text-muted">No description available.</p>
 <% } %>
 <h4>Weather</h4>
+<p class="lead text-center">
+  <%= weather.main.temp %>&#8451;
+  <br>
+  <small class="text-muted"><%= weather.weather[0].main %> (<%= weather.weather[0].description %>)</small>
+</p>
 <div id="forecast">
   <table class="table table-hover">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Day</th>
+        <th>Night</th>
+        <th></th>
+      </tr>
+    </thead>
     <tbody>
-      <% for (var i = 0; i <= forecast.length - 1; i++) { %>
-        <tr>
-          <th class="text-uppercase"><%= dayNames[new Date(forecast[i].dt * 1000).getDay()] %></th>
-          <td><%= forecast[i].temp.day %>&#8451;</td>
-          <td class="text-muted"><%= forecast[i].temp.night %>&#8451;</td>
-          <td>
-            <%= forecast[i].weather[0].main %>
-            <br>
-            (<%= forecast[i].weather[0].description %>)
-          </td>
-          <td><img src="<%= forecast[i].weather[0].iconUrl %>"></td>
+      <% for (var i = 0; i <= forecast.list.length - 1; i++) { %>
+        <tr data-toggle="tooltip" title="<%= forecast.list[i].weather[0].main %><br>(<%= forecast.list[i].weather[0].description %>)">
+          <th class="text-uppercase"><%= dayNames[new Date(forecast.list[i].dt * 1000).getDay()] %></th>
+          <td><%= forecast.list[i].temp.day %>&#8451;</td>
+          <td class="text-muted"><%= forecast.list[i].temp.night %>&#8451;</td>
+          <td><img src="<%= forecast.list[i].weather[0].iconUrl %>" alt="<%= forecast.list[i].weather[0].main %>"></td>
         </tr>
       <% } %>
     </tbody>
@@ -30,7 +38,7 @@
 <script>
   var disqus_config = function () {
     this.page.url = window.location.href;
-    this.page.identifier = <%= id %>;
+    this.page.identifier = <%= place.id %>;
   };
 
   (function() {

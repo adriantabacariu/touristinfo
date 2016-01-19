@@ -124,5 +124,20 @@
     </div>
     </div>
     <% include includes/footer %>
+    <script>
+      $('.panel').popover({
+        container: 'body',
+        content: 'Use this panel to find some amazing content. It&apos;s very engaging. Right?',
+        html: true,
+        title: 'Hey, <%= user.username %>!',
+        trigger: 'manual'
+      });
+
+      $('.panel').popover('show');
+
+      $(document).click(function () {
+        $('.panel').popover('destroy');
+      });
+    </script>
   </body>
 </html>
