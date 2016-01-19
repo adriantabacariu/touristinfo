@@ -57,9 +57,19 @@
       }
     });
 
-    autocomplete = new google.maps.places.Autocomplete($('#query')[0]);
+    var $query = $('#query');
 
-    autocomplete.bindTo('bounds', map);
+    if ($query.length) {
+      autocomplete = new google.maps.places.Autocomplete($query[0]);
+
+      autocomplete.bindTo('bounds', map);
+    }
+
+    $query.keydown(function (event) {
+      if (event.which == 13 && $('.pac-container:visible').length) {
+        return false;
+      }
+    });
 
     map.addListener('click', function (event) {
       if (touristinfo.map.mode === 'add') {
@@ -226,11 +236,5 @@
     var marker = touristinfo.map.markers.pop();
 
     marker.setMap(null);
-  });
-
-  $('#query').keydown(function (event) {
-    if (event.which == 13 && $('.pac-container:visible').length) {
-      return false;
-    }
   });
 })(jQuery);
