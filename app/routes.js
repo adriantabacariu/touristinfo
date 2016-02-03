@@ -3,9 +3,10 @@ var async = require('async');
 var mysql = require('mysql');
 var connection = mysql.createConnection(config.db.connection);
 var weather = require('./weather');
+var weatherMapper = require('./weatherMapper');
 
 module.exports = function (app, passport) {
-  app.get('/', isLoggedIn, function(req, res) {
+  app.get('/', isLoggedIn, function (req, res) {
     res.render('index.ejs', {
       user: req.user
     });
@@ -47,15 +48,15 @@ module.exports = function (app, passport) {
     connection.query('INSERT INTO ' + config.db.tables.places + ' VALUES (NULL, ?, ?, ?, ?)', [
       req.body.name, req.body.latitude, req.body.longitude, req.body.description || null
     ],
-    function (err, rows) {
-      if (err) {
-        res.status(500).send('Something broke!');
+      function (err, rows) {
+        if (err) {
+          res.status(500).send('Something broke!');
 
-        return next();
-      }
+          return next();
+        }
 
-      res.json(rows.insertId);
-    });
+        res.json(rows.insertId);
+      });
   });
 
   app.get('/ajax/places/:id', isLoggedIn, function (req, res, next) {
@@ -96,18 +97,52 @@ module.exports = function (app, passport) {
           });
         },
       ],
-      function (err, results) {
-        res.render('ajax/place.ejs', {
-          dayNames: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-          disqus: config.disqus,
-          forecast: results[1],
-          place: rows[0],
-          weather: results[0]
+        function (err, results) {
+          res.render('ajax/place.ejs', {
+            dayNames: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+            disqus: config.disqus,
+            forecast: results[1],
+            place: rows[0],
+            weather: results[0]
+          });
         });
-      });
+    });
+  });
+  
+  // Weather API
+  app.get('/api/weather', function (req, res) {
+    var query = null;
+
+    if (isValidWeatherRequestByName(req.query)) {
+      query = {
+        q: req.query.name
+      };
+    }
+
+    if (!query && isValidWeatherRequestByCoordinates(req.query)) {
+      query = req.query;
+    }
+
+    if(!query){
+      res.status(400).send('Bad request!');
+    }
+
+    weather.dailyForecast(query, function (data) {
+      var response = weatherMapper.mapWeatherResponse(data);
+      res.json(response);
     });
   });
 
+  function isValidWeatherRequestByName(query) {
+    return query && query.name;
+  }
+
+  function isValidWeatherRequestByCoordinates(query) {
+    return query && query.lat && query.lon;
+  }
+
+  // Weather API - end
+   
   app.get('/login', function (req, res) {
     res.render('login.ejs', {
       message: req.flash('loginMessage')
@@ -115,19 +150,19 @@ module.exports = function (app, passport) {
   });
 
   app.post('/login', passport.authenticate('login', {
-    failureFlash : true,
-    failureRedirect : '/login',
-    successRedirect : '/'
+    failureFlash: true,
+    failureRedirect: '/login',
+    successRedirect: '/'
   }),
-  function (req, res) {
-    if (req.body.remember) {
-      req.session.cookie.maxAge = 5 * 60 * 1000;
-    } else {
-      req.session.cookie.expires = false;
-    }
+    function (req, res) {
+      if (req.body.remember) {
+        req.session.cookie.maxAge = 5 * 60 * 1000;
+      } else {
+        req.session.cookie.expires = false;
+      }
 
-    res.redirect('/');
-  });
+      res.redirect('/');
+    });
 
   app.get('/join', function (req, res) {
     res.render('join.ejs', {
