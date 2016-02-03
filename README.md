@@ -5,12 +5,10 @@
 ```
 $ git clone https://github.com/cdog/touristinfo.git
 $ cd touristinfo
-$ npm install -g grunt-cli # install grunt command line interface if not already installed
 $ npm install
 $ mysql -u <USERNAME> -p <DATABASE> < scripts/schema.sql # make sure to create the database first
 $ cp config/settings-sample.js config/settings.js
 $ vim config/settings.js # enter your configuration settings
-$ grunt build
 $ node server.js # open http://127.0.0.1:4000/ in your browser, and voilà
 ```
 
