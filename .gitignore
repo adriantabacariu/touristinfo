@@ -1,5 +1,5 @@
 # Configuration settings
-/config/settings.js
+/config/settings-local.js
 
 # Build generated files
 /public/assets

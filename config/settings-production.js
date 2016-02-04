@@ -2,7 +2,7 @@ module.exports = {
   // Database settings
   db: {
     // Database connection
-    connection: 'mysql://username:password@localhost/touristinfo?reconnect=true',
+    connection: process.env.CLEARDB_DATABASE_URL,
 
     // Database tables
     tables: {
@@ -13,11 +13,11 @@ module.exports = {
 
   // OpenWeatherMap settings
   openweathermap: {
-    appid: ''
+    appid: process.env.OPENWEATHERMAP_APPID
   },
 
   // Disqus settings
   disqus: {
-    shortname: ''
+    shortname: process.env.DISQUS_SHORTNAME
   }
 };
