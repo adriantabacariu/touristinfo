@@ -2,14 +2,7 @@ module.exports = {
   // Database settings
   db: {
     // Database connection
-    connection: 'mysql://username:password@localhost/touristinfo?reconnect=true',
-    mongoUri: 'mongodb://localhost:27017/touristinfo',
-
-    // Database collections
-    collections: {
-      users: 'users',
-      places: 'places'
-    }
+    connection: 'mongodb://localhost:27017/touristinfo'
   },
 
   // OpenWeatherMap settings

@@ -2,14 +2,7 @@ module.exports = {
   // Database settings
   db: {
     // Database connection
-    connection: process.env.MONGOLAB_URI,
-    mongoUri: 'mongodb://localhost:27017/touristinfo',
-
-    // Database collections
-    collections: {
-      users: 'users',
-      places: 'places'
-    }
+    connection: process.env.MONGOLAB_URI
   },
 
   // OpenWeatherMap settings
