@@ -4,6 +4,9 @@
 # Build generated files
 /public/assets
 
+# MongoDB stored data
+/db
+
 # OS generated files
 ._*
 .DS_Store
