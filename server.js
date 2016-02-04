@@ -1,12 +1,16 @@
+var config = require('./config/settings');
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var flash = require('connect-flash');
+var mongoose = require('mongoose');
 var morgan = require('morgan');
 var passport = require('passport');
 var session = require('express-session');
 var port = process.env.PORT || 4000;
+
+mongoose.connect(config.db.connection);
 
 require('./config/passport')(passport);
 

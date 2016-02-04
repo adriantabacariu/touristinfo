@@ -1,17 +1,16 @@
-var config = require('./settings');
 var bcrypt = require('bcrypt-nodejs');
-var mysql = require('mysql');
-var connection = mysql.createConnection(config.db.connection);
 var LocalStrategy = require('passport-local').Strategy;
+var User = require('../models/user');
+var Place = require('../models/place');
 
 module.exports = function (passport) {
   passport.serializeUser(function (user, done) {
-    done(null, user.id);
+    done(null, user._id);
   });
 
   passport.deserializeUser(function (id, done) {
-    connection.query('SELECT * FROM ' + config.db.tables.users + ' WHERE id = ?', [id], function (err, rows) {
-      done(err, rows[0]);
+    User.findById(id, function (err, user) {
+      done(err, user);
     });
   });
 
@@ -21,27 +20,27 @@ module.exports = function (passport) {
     usernameField: 'username'
   },
   function (req, username, password, done) {
-    connection.query('SELECT * FROM ' + config.db.tables.users + ' WHERE username = ?', [username], function (err, rows) {
+    User.findOne({ username: username }, function (err, user) {
       if (err) {
         return done(err);
       }
 
-      if (rows.length) {
+      if (user) {
         return done(null, false, req.flash('joinMessage', 'Username already taken.'));
-      } else {
-        var newUserMysql = {
-          password: bcrypt.hashSync(password, null, null),
-          username: username
-        };
-
-        var insertQuery = 'INSERT INTO ' + config.db.tables.users + ' (username, password) VALUES (?, ?)';
-
-        connection.query(insertQuery, [newUserMysql.username, newUserMysql.password], function (err, rows) {
-          newUserMysql.id = rows.insertId;
-
-          return done(null, newUserMysql);
-        });
       }
+
+      var newUser = new User({
+        password: bcrypt.hashSync(password, null, null),
+        username: username
+      });
+
+      newUser.save(function (err) {
+        if (err) {
+          return done(err);
+        }
+
+        return done(null, newUser);
+      });
     });
   }));
 
@@ -51,20 +50,20 @@ module.exports = function (passport) {
     usernameField: 'username'
   },
   function (req, username, password, done) {
-    connection.query('SELECT * FROM ' + config.db.tables.users + ' WHERE username = ?', [username], function (err, rows) {
+    User.findOne({ username: username }, function (err, user) {
       if (err) {
         return done(err);
       }
 
-      if (!rows.length) {
+      if (!user) {
         return done(null, false, req.flash('loginMessage', 'User not found.'));
       }
 
-      if (!bcrypt.compareSync(password, rows[0].password)) {
+      if (!bcrypt.compareSync(password, user.password)) {
         return done(null, false, req.flash('loginMessage', 'Wrong password.'));
       }
 
-      return done(null, rows[0]);
+      return done(null, user);
     });
   }));
 };

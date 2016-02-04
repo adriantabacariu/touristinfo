@@ -7,11 +7,11 @@
 
   function addMarker(place) {
     var marker = new google.maps.Marker({
-      id: place.id,
+      id: place._id,
       map: map,
       position: {
-        lat: place.latitude,
-        lng: place.longitude
+        lat: place.location[1],
+        lng: place.location[0]
       },
       title: place.name
     });

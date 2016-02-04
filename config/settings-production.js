@@ -2,13 +2,7 @@ module.exports = {
   // Database settings
   db: {
     // Database connection
-    connection: process.env.CLEARDB_DATABASE_URL,
-
-    // Database tables
-    tables: {
-      users: 'users',
-      places: 'places'
-    }
+    connection: process.env.MONGOLAB_URI
   },
 
   // OpenWeatherMap settings
