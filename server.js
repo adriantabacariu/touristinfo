@@ -5,6 +5,7 @@ var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var flash = require('connect-flash');
 var mongoose = require('mongoose');
+var ObjectId = mongoose.Types.ObjectId; 
 var morgan = require('morgan');
 var passport = require('passport');
 var session = require('express-session');
@@ -32,6 +33,6 @@ app.use(passport.session());
 
 app.set('view engine', 'ejs');
 
-require('./app/routes.js')(app, passport);
+require('./app/routes.js')(app, passport, ObjectId);
 
 app.listen(port);

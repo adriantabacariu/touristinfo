@@ -5,7 +5,7 @@ var Place = require('../models/place');
 var weather = require('./weather');
 var weatherMapper = require('./weatherMapper');
 
-module.exports = function (app, passport) {
+module.exports = function (app, passport, ObjectId) {
   app.get('/', isLoggedIn, function (req, res) {
     res.render('index.ejs', {
       user: req.user
@@ -81,7 +81,7 @@ module.exports = function (app, passport) {
   app.get('/ajax/places/:id', isLoggedIn, function (req, res, next) {
     var id = req.params.id;
 
-    Place.findOne({ _id: id }, function (err, place) {
+    Place.findOne({ _id: new ObjectId(id) }, function (err, place) {
       if (err) {
         res.status(500).send('Something broke!');
 
