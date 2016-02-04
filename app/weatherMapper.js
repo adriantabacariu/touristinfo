@@ -1,6 +1,6 @@
 (function () {
-  exports.mapWeatherResponse = function(rawWeatherResponse){
-    var response = rawWeatherResponse.list.map(function(element){
+  exports.mapWeatherResponse = function (rawWeatherResponse) {
+    return rawWeatherResponse.list.map(function (element) {
       return {
         description: element.weather[0].description,
         shortDescription: element.weather[0].main,
@@ -12,6 +12,5 @@
         icon: element.weather[0].iconUrl
       };
     });
-    return response;
   };
-}());
+})();

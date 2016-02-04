@@ -1,17 +1,9 @@
 (function () {
-  var config = require('./settings');
+  var config = require('../../config/settings');
   var bcrypt = require('bcrypt-nodejs');
   var MongoClient = require('mongodb').MongoClient;
-
   var usersCollection = config.db.collections.users;
   var mongoUri = config.db.mongoUri;
-
-  module.exports = {
-    executeDbQuery: executeDbQuery,
-    findUserById: findUserById,
-    findUserByName: findUserByName,
-    insertUser: insertUser
-  };
 
   var executeDbQuery = function (query, params, callback) {
     MongoClient.connect(mongoUri, function (err, db) {
@@ -24,7 +16,7 @@
   };
 
   var findUserById = function (db, params, callback) {
-    var data = db.collection(usersCollection).find({ "id": params.id });
+    var data = db.collection(usersCollection).find({ 'id': params.id });
 
     if (data.length !== 1) {
       callback('No such user with id = ' + params.id);
@@ -34,7 +26,7 @@
   };
 
   var findUserByName = function (db, params, callback) {
-    var data = db.collection(usersCollection).find({ "username": params.username });
+    var data = db.collection(usersCollection).find({ 'username': params.username });
 
     if (data.length !== 1) {
       callback('No such user with username = ' + params.username);
@@ -54,4 +46,11 @@
       callback('Failed to insert user');
     });
   };
-} ());
+
+  module.exports = {
+    executeDbQuery: executeDbQuery,
+    findUserById: findUserById,
+    findUserByName: findUserByName,
+    insertUser: insertUser
+  };
+})();
