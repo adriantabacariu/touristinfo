@@ -9,11 +9,14 @@ module.exports = {
       database: 'touristinfo'
     },
 
-    // Database tables
-    tables: {
+    // Database collections
+    collections: {
       users: 'users',
       places: 'places'
-    }
+    },
+    
+    // Database connection
+    mongoUri: 'mongodb://localhost:27017/touristinfo'
   },
 
   // OpenWeatherMap settings
