@@ -1,7 +1,7 @@
 var config = require('../config/settings');
 var async = require('async');
-var mysql = require('mysql');
-var connection = mysql.createConnection(config.db.connection);
+var User = require('../models/user');
+var Place = require('../models/place');
 var weather = require('./weather');
 var weatherMapper = require('./weatherMapper');
 
@@ -13,64 +13,83 @@ module.exports = function (app, passport) {
   });
 
   app.get('/ajax/places', function (req, res, next) {
-    connection.query('SELECT * FROM ' + config.db.tables.places, function (err, rows) {
+    Place.find({}, function (err, places) {
       if (err) {
         res.status(500).send('Something broke!');
 
         return next();
       }
 
-      res.json(rows);
+      res.json(places);
     });
   });
 
   app.post('/ajax/places/filter', function (req, res, next) {
-    connection.query('SELECT id, name, latitude, longitude, (? * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance FROM ' + config.db.tables.places + ' HAVING distance < ?', [
-      req.body.distance === 'mi' ? 3959 : 6371, req.body.latitude, req.body.longitude, req.body.latitude, req.body.radius
-    ], function (err, rows) {
+    var location = {
+      $geoWithin: {
+        $centerSphere: [
+          [
+            req.body.longitude,
+            req.body.latitude
+          ],
+          req.body.radius / (req.body.distance === 'mi' ? 3963.2 : 6378.1)
+        ]
+      }
+    };
+
+    Place.find({ location: location }, function (err, places) {
       if (err) {
         res.status(500).send('Something broke!');
 
         return next();
       }
 
-      res.json(rows);
+      res.json(places);
     });
   });
 
   app.post('/ajax/places/add', isLoggedIn, function (req, res, next) {
-    if (req.user.id !== 1) {
+    if (req.user.username !== 'admin') {
       res.status(403).send('Forbidden!');
 
       return next();
     }
 
-    connection.query('INSERT INTO ' + config.db.tables.places + ' VALUES (NULL, ?, ?, ?, ?)', [
-      req.body.name, req.body.latitude, req.body.longitude, req.body.description || null
-    ],
-      function (err, rows) {
-        if (err) {
-          res.status(500).send('Something broke!');
+    var place = new Place({
+      name: req.body.name,
+      location: [
+        req.body.longitude,
+        req.body.latitude
+      ]
+    });
 
-          return next();
-        }
+    if (req.body.description) {
+      place.description = req.body.description
+    }
 
-        res.json(rows.insertId);
-      });
-  });
-
-  app.get('/ajax/places/:id', isLoggedIn, function (req, res, next) {
-    var id = req.params.id;
-
-    connection.query('SELECT * FROM ' + config.db.tables.places + ' WHERE id = ?', [id], function (err, rows) {
+    place.save(function (err) {
       if (err) {
         res.status(500).send('Something broke!');
 
         return next();
       }
 
-      if (!rows.length) {
-        res.status(404).send('Something broke!');
+      res.json(place._id);
+    });
+  });
+
+  app.get('/ajax/places/:id', isLoggedIn, function (req, res, next) {
+    var id = req.params.id;
+
+    Place.findOne({ _id: id }, function (err, place) {
+      if (err) {
+        res.status(500).send('Something broke!');
+
+        return next();
+      }
+
+      if (!place) {
+        res.status(404).send('Place not found!');
 
         return next();
       }
@@ -78,8 +97,8 @@ module.exports = function (app, passport) {
       async.parallel([
         function (callback) {
           var params = {
-            lat: rows[0].latitude,
-            lon: rows[0].longitude
+            lat: place.latitude,
+            lon: place.longitude
           };
 
           weather.currentWeather(params, function (data) {
@@ -88,8 +107,8 @@ module.exports = function (app, passport) {
         },
         function (callback) {
           var params = {
-            lat: rows[0].latitude,
-            lon: rows[0].longitude
+            lat: place.latitude,
+            lon: place.longitude
           };
 
           weather.dailyForecast(params, function (data) {
@@ -97,18 +116,18 @@ module.exports = function (app, passport) {
           });
         },
       ],
-        function (err, results) {
-          res.render('ajax/place.ejs', {
-            dayNames: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-            disqus: config.disqus,
-            forecast: results[1],
-            place: rows[0],
-            weather: results[0]
-          });
+      function (err, results) {
+        res.render('ajax/place.ejs', {
+          dayNames: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+          disqus: config.disqus,
+          forecast: results[1],
+          place: place,
+          weather: results[0]
         });
+      });
     });
   });
-  
+
   // Weather API
   app.get('/api/weather', function (req, res) {
     var query = null;
@@ -123,12 +142,13 @@ module.exports = function (app, passport) {
       query = req.query;
     }
 
-    if(!query){
+    if (!query) {
       res.status(400).send('Bad request!');
     }
 
     weather.dailyForecast(query, function (data) {
       var response = weatherMapper.mapWeatherResponse(data);
+
       res.json(response);
     });
   });
@@ -142,7 +162,7 @@ module.exports = function (app, passport) {
   }
 
   // Weather API - end
-   
+
   app.get('/login', function (req, res) {
     res.render('login.ejs', {
       message: req.flash('loginMessage')
@@ -154,15 +174,15 @@ module.exports = function (app, passport) {
     failureRedirect: '/login',
     successRedirect: '/'
   }),
-    function (req, res) {
-      if (req.body.remember) {
-        req.session.cookie.maxAge = 5 * 60 * 1000;
-      } else {
-        req.session.cookie.expires = false;
-      }
+  function (req, res) {
+    if (req.body.remember) {
+      req.session.cookie.maxAge = 5 * 60 * 1000;
+    } else {
+      req.session.cookie.expires = false;
+    }
 
-      res.redirect('/');
-    });
+    res.redirect('/');
+  });
 
   app.get('/join', function (req, res) {
     res.render('join.ejs', {
