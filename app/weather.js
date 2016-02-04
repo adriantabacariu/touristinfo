@@ -64,7 +64,6 @@ var config = require('../config/settings');
 
 			callback(response);
 		}, function onError(error) {
-			console.log(error);
 			callback(error);
 		});
 	};
