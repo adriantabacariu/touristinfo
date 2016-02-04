@@ -97,8 +97,8 @@ module.exports = function (app, passport, ObjectId) {
       async.parallel([
         function (callback) {
           var params = {
-            lat: place.latitude,
-            lon: place.longitude
+            lat: place.location[0],
+            lon: place.location[1]
           };
 
           weather.currentWeather(params, function (data) {
@@ -107,8 +107,8 @@ module.exports = function (app, passport, ObjectId) {
         },
         function (callback) {
           var params = {
-            lat: place.latitude,
-            lon: place.longitude
+            lat: place.location[0],
+            lon: place.location[1]
           };
 
           weather.dailyForecast(params, function (data) {
