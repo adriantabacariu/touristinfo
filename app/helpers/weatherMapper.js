@@ -1,4 +1,11 @@
 (function () {
+  /**
+  * Maps the raw weather response to a lightweight model. Used by the API method.
+  * @function
+  * @param {object} rawWeatherResponse - The raw weather response.
+  * @return {object} - The lightweight model.
+  * @memberOf weatherMapper
+  */
   exports.mapWeatherResponse = function (rawWeatherResponse) {
     return rawWeatherResponse.list.map(function (element) {
       return {

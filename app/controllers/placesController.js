@@ -3,9 +3,22 @@
   var config = require('../../config/settings');
   var Place = require('../../models/place');
 
+  /**
+  * PlacesController module that exposes 
+  * methods for retrieving and manipulating places and locations.
+  * @constructor
+  */
   module.exports = function (weatherAdapter, ObjectId) {
     var self = this;
 
+    /**
+    * Get all the places.
+    * @function
+    * @param {object} req - The request.
+    * @param {object} res - The response.
+    * @param {function} next - The next handler for this expressJs route.
+    * @memberOf placesController
+    */
     self.getPlaces = function (req, res, next) {
       Place.find({}, function (err, places) {
         if (err) {
@@ -18,6 +31,14 @@
       });
     };
 
+    /**
+    * Get all the places around a location in a given radius.
+    * @function
+    * @param {object} req - The request.
+    * @param {object} res - The response.
+    * @param {function} next - The next handler for this expressJs route.
+    * @memberOf placesController
+    */
     self.getPlacesAroundLocation = function (req, res, next) {
       var location = {
         $geoWithin: {
@@ -42,6 +63,14 @@
       });
     };
 
+    /**
+    * Add a location to the database.
+    * @function
+    * @param {object} req - The request.
+    * @param {object} res - The response.
+    * @param {function} next - The next handler for this expressJs route.
+    * @memberOf placesController
+    */
     self.insertPlace = function (req, res, next) {
       if (req.user.username !== 'admin') {
         res.status(403).send('Forbidden!');
@@ -72,6 +101,14 @@
       });
     };
 
+    /**
+    * Get the place for a given id.
+    * @function
+    * @param {object} req - The request.
+    * @param {object} res - The response.
+    * @param {function} next - The next handler for this expressJs route.
+    * @memberOf placesController
+    */
     self.getPlaceById = function (req, res, next) {
       var id = req.params.id;
 

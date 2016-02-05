@@ -1,111 +1,137 @@
 var config = require('../../config/settings');
 
 (function () {
-	//queryEx: var query = {id: 524901};
-	//Forecast: 5 days every 3 hours
-	exports.forecast = function (query, callback) {
-		var openWeatherPath = '/data/2.5/forecast?';
-		doListQuery(query, openWeatherPath, callback);
-	};
 
-	//queryEx: var query = {id: 524901};
-	//Forecast: 16 days daily forecast
-	exports.dailyForecast = function (query, callback) {
-		var openWeatherPath = '/data/2.5/forecast/daily?';
-		doListQuery(query, openWeatherPath, callback);
-	};
+  /**
+  * Forecast: 5 days every 3 hours.
+  * @function
+  * @param {object} query - The query to be executed (Example: query = {lat: 52.4901, lon: 43.5}).
+  * @param {function} callback - The function that will get called after weather retrieval.
+  * @memberOf weatherAdapter
+  */
+  exports.forecast = function (query, callback) {
+    var openWeatherPath = '/data/2.5/forecast?';
+    doListQuery(query, openWeatherPath, callback);
+  };
 
-	//queryEx: var query = {id: 524901};
-	//Find: current weather for city
-	exports.currentWeather = function (query, callback) {
-		var openWeatherPath = '/data/2.5/weather?';
-		doListQuery(query, openWeatherPath, callback);
-	};
+  /**
+  * Forecast: 16 days daily forecast.
+  * @function
+  * @param {object} query - The query to be executed (Example: query = {lat: 52.4901, lon: 43.5}).
+  * @param {function} callback - The function that will get called after weather retrieval.
+  * @memberOf weatherAdapter
+  */
+  exports.dailyForecast = function (query, callback) {
+    var openWeatherPath = '/data/2.5/forecast/daily?';
+    doListQuery(query, openWeatherPath, callback);
+  };
 
-	//queryEx: var query = {bbox: '12,32,15,37,10'};
-	//Box: current weather for in a rectangle
-	exports.currentWeatherInBox = function (query, callback) {
-		var openWeatherPath = '/data/2.5/box/city?';
-		query.cluster = 'yes';
-		doListQuery(query, openWeatherPath, callback);
-	};
+  /**
+  * Find: current weather for city.
+  * @function
+  * @param {object} query - The query to be executed (Example: query = {lat: 52.4901, lon: 43.5}).
+  * @param {function} callback - The function that will get called after weather retrieval.
+  * @memberOf weatherAdapter
+  */
+  exports.currentWeather = function (query, callback) {
+    var openWeatherPath = '/data/2.5/weather?';
+    doListQuery(query, openWeatherPath, callback);
+  };
 
-	//queryEx: var query = {lat:55.5, lon:37.5, cnt:10};
-	//Find: current weather for in a circle from the center point
-	exports.currentWeatherInCircle = function (query, callback) {
-		var openWeatherPath = '/data/2.5/find?';
-		doListQuery(query, openWeatherPath, callback);
-	};
+  /**
+  * Box: current weather for in a rectangle
+  * @function
+  * @param {object} query - The query to be executed (Example: query = {bbox: '12,32,15,37,10'}).
+  * @param {function} callback - The function that will get called after weather retrieval.
+  * @memberOf weatherAdapter
+  */
+  exports.currentWeatherInBox = function (query, callback) {
+    var openWeatherPath = '/data/2.5/box/city?';
+    query.cluster = 'yes';
+    doListQuery(query, openWeatherPath, callback);
+  };
 
-	var http = require('http');
-	var weatherConfig = {
-		host: 'api.openweathermap.org',
-		port: 80,
-		withCredentials: false
-	};
-	var weatherImgBasePath = 'http://openweathermap.org/img/w/';
-	var appId = config.openweathermap.appid;
+  /**
+  * Find: current weather for in a circle from the center point
+  * @function
+  * @param {object} query - The query to be executed (Example: query = {lat:55.5, lon:37.5, cnt:10}).
+  * @param {function} callback - The function that will get called after weather retrieval.
+  * @memberOf weatherAdapter
+  */
+  exports.currentWeatherInCircle = function (query, callback) {
+    var openWeatherPath = '/data/2.5/find?';
+    doListQuery(query, openWeatherPath, callback);
+  };
 
-	function doListQuery(query, openWeatherPath, callback) {
-		query.units = 'metric';
-		query.appId = appId;
-		openWeatherPath += buildQueryFromObject(query);
-		weatherConfig.path = openWeatherPath;
-		getWeather(weatherConfig, function onSuccess(response) {
-			var list = response.list;
-			var currentIndex = list.length;
-			var listItem;
+  var http = require('http');
+  var weatherConfig = {
+    host: 'api.openweathermap.org',
+    port: 80,
+    withCredentials: false
+  };
+  var weatherImgBasePath = 'http://openweathermap.org/img/w/';
+  var appId = config.openweathermap.appid;
 
-			while (currentIndex--) {
-				listItem = list[currentIndex];
-				listItem.weather[0].iconUrl = weatherImgBasePath + listItem.weather[0].icon + '.png';
-			}
+  function doListQuery(query, openWeatherPath, callback) {
+    query.units = 'metric';
+    query.appId = appId;
+    openWeatherPath += buildQueryFromObject(query);
+    weatherConfig.path = openWeatherPath;
+    getWeather(weatherConfig, function onSuccess(response) {
+      var list = response.list;
+      var currentIndex = list.length;
+      var listItem;
 
-			callback(response);
-		}, function onError(error) {
-			callback(error);
-		});
-	};
+      while (currentIndex--) {
+        listItem = list[currentIndex];
+        listItem.weather[0].iconUrl = weatherImgBasePath + listItem.weather[0].icon + '.png';
+      }
 
-	function buildQueryFromObject(jsObject) {
-		var value;
-		var query = '';
+      callback(response);
+    }, function onError(error) {
+      callback(error);
+    });
+  };
 
-		for (var key in jsObject) {
-			value = jsObject[key];
-			query += key + '=' + value + '&';
-		}
+  function buildQueryFromObject(jsObject) {
+    var value;
+    var query = '';
 
-		return query.slice(0, -1);
-	};
+    for (var key in jsObject) {
+      value = jsObject[key];
+      query += key + '=' + value + '&';
+    }
 
-	function getWeather(weatherRequest, successFn, errorFn) {
-		return http.get(weatherRequest, function (weatherResponse) {
-			var tempBuffer = '';
+    return query.slice(0, -1);
+  };
 
-			weatherResponse.on('data', function (data) {
-				return tempBuffer += data;
-			});
+  function getWeather(weatherRequest, successFn, errorFn) {
+    return http.get(weatherRequest, function (weatherResponse) {
+      var tempBuffer = '';
 
-			weatherResponse.on('error', function (error) {
-				return errorFn(error);
-			});
+      weatherResponse.on('data', function (data) {
+        return tempBuffer += data;
+      });
 
-			return weatherResponse.on('end', function () {
-				var response;
+      weatherResponse.on('error', function (error) {
+        return errorFn(error);
+      });
 
-				try {
-					response = JSON.parse(tempBuffer);
-				} catch (exception) {
-					return errorFn(exception);
-				}
+      return weatherResponse.on('end', function () {
+        var response;
 
-				if (response.list == null) {
-					response.list = [];
-				}
+        try {
+          response = JSON.parse(tempBuffer);
+        } catch (exception) {
+          return errorFn(exception);
+        }
 
-				return successFn(response);
-			});
-		});
-	}
+        if (response.list == null) {
+          response.list = [];
+        }
+
+        return successFn(response);
+      });
+    });
+  }
 })();
