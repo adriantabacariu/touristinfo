@@ -3,7 +3,7 @@
   var config = require('../../config/settings');
   var Place = require('../../models/place');
 
-  module.exports = function (weather, ObjectId) {
+  module.exports = function (weatherAdapter, ObjectId) {
     var self = this;
 
     self.getPlaces = function (req, res, next) {
@@ -95,7 +95,7 @@
               lon: place.location[1]
             };
 
-            weather.currentWeather(params, function (data) {
+            weatherAdapter.currentWeather(params, function (data) {
               callback(null, data);
             });
           },
@@ -105,7 +105,7 @@
               lon: place.location[1]
             };
 
-            weather.dailyForecast(params, function (data) {
+            weatherAdapter.dailyForecast(params, function (data) {
               callback(null, data);
             });
           },

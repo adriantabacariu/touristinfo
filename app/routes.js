@@ -1,4 +1,4 @@
-var weather = require('./weather');
+var weatherAdapter = require('./helpers/weatherAdapter');
 var AuthenticationController = require('./controllers/authenticationController');
 var UsersController = require('./controllers/usersController');
 var WeatherController = require('./controllers/weatherController');
@@ -7,8 +7,8 @@ var PlacesController = require('./controllers/placesController');
 module.exports = function (app, passport, ObjectId) {
   var authenticationController = new AuthenticationController(passport);
   var usersController = new UsersController();
-  var weatherController = new WeatherController(weather);
-  var placesController = new PlacesController(weather, ObjectId);
+  var weatherController = new WeatherController(weatherAdapter);
+  var placesController = new PlacesController(weatherAdapter, ObjectId);
 
   app.get('/', usersController.isLoggedIn, function (req, res) {
     res.render('index.ejs', {

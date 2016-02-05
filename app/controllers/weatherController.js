@@ -1,6 +1,6 @@
 (function () {
-  var weatherMapper = require('../weatherMapper');
-  module.exports = function (weather) {
+  var weatherMapper = require('../helpers/weatherMapper');
+  module.exports = function (weatherAdapter) {
     var self = this;
 
     self.getWeatherInfo = function (req, res) {
@@ -20,7 +20,7 @@
         res.status(400).send('Bad request!');
       }
 
-      weather.dailyForecast(query, function (data) {
+      weatherAdapter.dailyForecast(query, function (data) {
         var response = weatherMapper.mapWeatherResponse(data);
 
         res.json(response);

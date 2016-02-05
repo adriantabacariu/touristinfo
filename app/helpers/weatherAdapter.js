@@ -1,4 +1,4 @@
-var config = require('../config/settings');
+var config = require('../../config/settings');
 
 (function () {
 	//queryEx: var query = {id: 524901};
