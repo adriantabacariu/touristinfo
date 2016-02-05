@@ -145,6 +145,14 @@ module.exports = function (grunt) {
     },
     clean: {
       assets: 'public/assets'
+    },
+    jsdoc: {
+      dist: {
+        src: ['app/**/*.js'],
+        options: {
+          destination: 'doc'
+        }
+      }
     }
   });
 
@@ -152,6 +160,6 @@ module.exports = function (grunt) {
   grunt.registerTask('css', ['less', 'postcss', 'csscomb', 'csslint', 'cssmin']);
   grunt.registerTask('js', ['eslint', 'jscs', 'concat', 'uglify']);
   grunt.registerTask('build', ['assets', 'css', 'js']);
-  grunt.registerTask('test', ['clean', 'build']);
+  grunt.registerTask('test', ['clean', 'build', 'jsdoc']);
   grunt.registerTask('default', 'build');
 };

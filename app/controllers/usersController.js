@@ -1,20 +1,22 @@
+/**
+ * The UsersController module.
+ * @module usersController
+ */
 (function () {
   /**
   * UsersController module that exposes pre and 
   * post passportJs actions.
   * @constructor
   */
-  module.exports = function () {
-    var self = this;
-
+  module.exports = function usersController() {
     /**
     * Get the registration view.
     * @function
     * @param {object} req - The request.
     * @param {object} res - The response.
-    * @memberOf usersController
+    * @alias module:usersController#getRegistrationView
     */
-    self.getRegistrationView = function (req, res) {
+    this.getRegistrationView = function (req, res) {
       res.render('join.ejs', {
         message: req.flash('joinMessage')
       });
@@ -25,9 +27,9 @@
     * @function
     * @param {object} req - The request.
     * @param {object} res - The response.
-    * @memberOf usersController
+    * @alias module:usersController#getLoginView
     */
-    self.getLoginView = function (req, res) {
+    this.getLoginView = function (req, res) {
       res.render('login.ejs', {
         message: req.flash('loginMessage')
       });
@@ -39,9 +41,9 @@
     * @function
     * @param {object} req - The request.
     * @param {object} res - The response.
-    * @memberOf usersController
+    * @alias module:usersController#login
     */
-    self.login = function (req, res) {
+    this.login = function (req, res) {
       if (req.body.remember) {
         req.session.cookie.maxAge = 5 * 60 * 1000;
       } else {
@@ -56,9 +58,9 @@
     * @function
     * @param {object} req - The request.
     * @param {object} res - The response.
-    * @memberOf usersController
+    * @alias module:usersController#logout
     */
-    self.logout = function (req, res) {
+    this.logout = function (req, res) {
       req.logout();
       res.redirect('/');
     };
@@ -70,9 +72,9 @@
     * @param {object} req - The request.
     * @param {object} res - The response.
     * @param {function} next - The next handler for this expressJs route.
-    * @memberOf usersController
+    * @alias module:usersController#isLoggedIn
     */
-    self.isLoggedIn = function (req, res, next) {
+    this.isLoggedIn = function (req, res, next) {
       if (req.isAuthenticated()) {
         return next();
       }

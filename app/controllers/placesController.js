@@ -1,3 +1,7 @@
+/**
+ * The PlacesController module.
+ * @module placesController
+ */
 (function () {
   var async = require('async');
   var config = require('../../config/settings');
@@ -8,18 +12,16 @@
   * methods for retrieving and manipulating places and locations.
   * @constructor
   */
-  module.exports = function (weatherAdapter, ObjectId) {
-    var self = this;
-
+  module.exports = function placesController(weatherAdapter, ObjectId) {
     /**
     * Get all the places.
     * @function
     * @param {object} req - The request.
     * @param {object} res - The response.
     * @param {function} next - The next handler for this expressJs route.
-    * @memberOf placesController
+    * @alias module:placesController#getPlaces
     */
-    self.getPlaces = function (req, res, next) {
+    this.getPlaces = function (req, res, next) {
       Place.find({}, function (err, places) {
         if (err) {
           res.status(500).send('An error occured while trying to find the places!');
@@ -37,9 +39,9 @@
     * @param {object} req - The request.
     * @param {object} res - The response.
     * @param {function} next - The next handler for this expressJs route.
-    * @memberOf placesController
+    * @alias module:placesController#getPlacesAroundLocation
     */
-    self.getPlacesAroundLocation = function (req, res, next) {
+    this.getPlacesAroundLocation = function (req, res, next) {
       var location = {
         $geoWithin: {
           $centerSphere: [
@@ -69,9 +71,9 @@
     * @param {object} req - The request.
     * @param {object} res - The response.
     * @param {function} next - The next handler for this expressJs route.
-    * @memberOf placesController
+    * @alias module:placesController#insertPlace
     */
-    self.insertPlace = function (req, res, next) {
+    this.insertPlace = function (req, res, next) {
       if (req.user.username !== 'admin') {
         res.status(403).send('Forbidden!');
 
@@ -107,9 +109,9 @@
     * @param {object} req - The request.
     * @param {object} res - The response.
     * @param {function} next - The next handler for this expressJs route.
-    * @memberOf placesController
+    * @alias module:placesController#getPlaceById
     */
-    self.getPlaceById = function (req, res, next) {
+    this.getPlaceById = function (req, res, next) {
       var id = req.params.id;
 
       Place.findOne({ _id: new ObjectId(id) }, function (err, place) {

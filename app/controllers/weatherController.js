@@ -1,3 +1,7 @@
+/**
+ * The WeatherController module.
+ * @module weatherController
+ */
 (function () {
   var weatherMapper = require('../helpers/weatherMapper');
   
@@ -6,18 +10,16 @@
   * in a json format.
   * @constructor
   */
-  module.exports = function (weatherAdapter) {
-    var self = this;
-
+  module.exports = function weatherController(weatherAdapter) {
     /**
     * Get the weather information for a set of coordinates or location name.
     * Part of the weather api called by the mobile application.
     * @function
     * @param {object} req - The request.
     * @param {object} res - The response.
-    * @memberOf weatherController
+    * @alias module:weatherController#getWeatherInfo
     */
-    self.getWeatherInfo = function (req, res) {
+    this.getWeatherInfo = function (req, res) {
       var query = null;
 
       if (isValidWeatherRequestByName(req.query)) {
