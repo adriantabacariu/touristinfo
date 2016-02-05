@@ -18,3 +18,4 @@ $ node server.js # open http://127.0.0.1:4000/ in your browser, and voilà
 * clean
 * test
 * watch
+* docs

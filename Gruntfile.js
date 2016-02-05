@@ -160,6 +160,7 @@ module.exports = function (grunt) {
   grunt.registerTask('css', ['less', 'postcss', 'csscomb', 'csslint', 'cssmin']);
   grunt.registerTask('js', ['eslint', 'jscs', 'concat', 'uglify']);
   grunt.registerTask('build', ['assets', 'css', 'js']);
-  grunt.registerTask('test', ['clean', 'build', 'jsdoc']);
+  grunt.registerTask('test', ['clean', 'build']);
+  grunt.registerTask('docs', 'jsdoc');
   grunt.registerTask('default', 'build');
 };
