@@ -38,7 +38,6 @@ var config = require('../config/settings');
 	};
 
 	var http = require('http');
-	var url = require('url');
 	var weatherConfig = {
 		host: 'api.openweathermap.org',
 		port: 80,
