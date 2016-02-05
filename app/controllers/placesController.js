@@ -128,8 +128,8 @@
         async.parallel([
           function (callback) {
             var params = {
-              lat: place.location[0],
-              lon: place.location[1]
+              lon: place.location[0],
+              lat: place.location[1],
             };
 
             weatherAdapter.currentWeather(params, function (data) {
@@ -138,8 +138,8 @@
           },
           function (callback) {
             var params = {
-              lat: place.location[0],
-              lon: place.location[1]
+              lon: place.location[0],
+              lat: place.location[1]
             };
 
             weatherAdapter.dailyForecast(params, function (data) {
