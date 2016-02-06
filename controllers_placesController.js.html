@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: controllers/placesController.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: controllers/placesController.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * The PlacesController module.
+ * @module placesController
+ */
+(function () {
+  var async = require('async');
+  var config = require('../../config/settings');
+  var Place = require('../../models/place');
+
+  /**
+  * PlacesController module that exposes 
+  * methods for retrieving and manipulating places and locations.
+  * @constructor
+  */
+  module.exports = function placesController(weatherAdapter, ObjectId) {
+    /**
+    * Get all the places.
+    * @function
+    * @param {object} req - The request.
+    * @param {object} res - The response.
+    * @param {function} next - The next handler for this expressJs route.
+    * @alias module:placesController#getPlaces
+    */
+    this.getPlaces = function (req, res, next) {
+      Place.find({}, function (err, places) {
+        if (err) {
+          res.status(500).send('An error occured while trying to find the places!');
+
+          return next();
+        }
+
+        res.json(places);
+      });
+    };
+
+    /**
+    * Get all the places around a location in a given radius.
+    * @function
+    * @param {object} req - The request.
+    * @param {object} res - The response.
+    * @param {function} next - The next handler for this expressJs route.
+    * @alias module:placesController#getPlacesAroundLocation
+    */
+    this.getPlacesAroundLocation = function (req, res, next) {
+      var location = {
+        $geoWithin: {
+          $centerSphere: [
+            [
+              req.body.longitude,
+              req.body.latitude
+            ],
+            req.body.radius / (req.body.distance === 'mi' ? 3963.2 : 6378.1)
+          ]
+        }
+      };
+
+      Place.find({ location: location }, function (err, places) {
+        if (err) {
+          res.status(500).send('An error occured while trying to find places around that location!');
+
+          return next();
+        }
+
+        res.json(places);
+      });
+    };
+
+    /**
+    * Add a location to the database.
+    * @function
+    * @param {object} req - The request.
+    * @param {object} res - The response.
+    * @param {function} next - The next handler for this expressJs route.
+    * @alias module:placesController#insertPlace
+    */
+    this.insertPlace = function (req, res, next) {
+      if (req.user.username !== 'admin') {
+        res.status(403).send('Forbidden!');
+
+        return next();
+      }
+
+      var place = new Place({
+        name: req.body.name,
+        location: [
+          req.body.longitude,
+          req.body.latitude
+        ]
+      });
+
+      if (req.body.description) {
+        place.description = req.body.description
+      }
+
+      place.save(function (err) {
+        if (err) {
+          res.status(500).send('An error occured while trying to save this place!');
+
+          return next();
+        }
+
+        res.json(place._id);
+      });
+    };
+
+    /**
+    * Get the place for a given id.
+    * @function
+    * @param {object} req - The request.
+    * @param {object} res - The response.
+    * @param {function} next - The next handler for this expressJs route.
+    * @alias module:placesController#getPlaceById
+    */
+    this.getPlaceById = function (req, res, next) {
+      var id = req.params.id;
+
+      Place.findOne({ _id: new ObjectId(id) }, function (err, place) {
+        if (err) {
+          res.status(500).send('An error occured while trying to find this place!');
+
+          return next();
+        }
+
+        if (!place) {
+          res.status(404).send('Place not found!');
+
+          return next();
+        }
+
+        async.parallel([
+          function (callback) {
+            var params = {
+              lon: place.location[0],
+              lat: place.location[1],
+            };
+
+            weatherAdapter.currentWeather(params, function (data) {
+              callback(null, data);
+            });
+          },
+          function (callback) {
+            var params = {
+              lon: place.location[0],
+              lat: place.location[1]
+            };
+
+            weatherAdapter.dailyForecast(params, function (data) {
+              callback(null, data);
+            });
+          },
+        ],
+          function (err, results) {
+            res.render('ajax/place.ejs', {
+              dayNames: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+              disqus: config.disqus,
+              forecast: results[1],
+              place: place,
+              weather: results[0]
+            });
+          });
+      });
+    };
+  };
+} ());</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-authenticationController.html">authenticationController</a></li><li><a href="module-placesController.html">placesController</a></li><li><a href="module-routes.html">routes</a></li><li><a href="module-usersController.html">usersController</a></li><li><a href="module-weatherController.html">weatherController</a></li></ul><h3>Classes</h3><ul><li><a href="module-authenticationController.html">authenticationController</a></li><li><a href="module-placesController.html">placesController</a></li><li><a href="module-routes.html">routes</a></li><li><a href="module-usersController.html">usersController</a></li><li><a href="module-weatherController.html">weatherController</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sat Feb 06 2016 09:48:37 GMT+0200 (EET)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: helpers/weatherAdapter.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: helpers/weatherAdapter.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>var config = require('../../config/settings');
+
+(function () {
+
+  /**
+  * Forecast: 5 days every 3 hours.
+  * @function
+  * @param {object} query - The query to be executed (Example: query = {lat: 52.4901, lon: 43.5}).
+  * @param {function} callback - The function that will get called after weather retrieval.
+  * @memberOf weatherAdapter
+  */
+  exports.forecast = function (query, callback) {
+    var openWeatherPath = '/data/2.5/forecast?';
+    doListQuery(query, openWeatherPath, callback);
+  };
+
+  /**
+  * Forecast: 16 days daily forecast.
+  * @function
+  * @param {object} query - The query to be executed (Example: query = {lat: 52.4901, lon: 43.5}).
+  * @param {function} callback - The function that will get called after weather retrieval.
+  * @memberOf weatherAdapter
+  */
+  exports.dailyForecast = function (query, callback) {
+    var openWeatherPath = '/data/2.5/forecast/daily?';
+    doListQuery(query, openWeatherPath, callback);
+  };
+
+  /**
+  * Find: current weather for city.
+  * @function
+  * @param {object} query - The query to be executed (Example: query = {lat: 52.4901, lon: 43.5}).
+  * @param {function} callback - The function that will get called after weather retrieval.
+  * @memberOf weatherAdapter
+  */
+  exports.currentWeather = function (query, callback) {
+    var openWeatherPath = '/data/2.5/weather?';
+    doListQuery(query, openWeatherPath, callback);
+  };
+
+  /**
+  * Box: current weather for in a rectangle
+  * @function
+  * @param {object} query - The query to be executed (Example: query = {bbox: '12,32,15,37,10'}).
+  * @param {function} callback - The function that will get called after weather retrieval.
+  * @memberOf weatherAdapter
+  */
+  exports.currentWeatherInBox = function (query, callback) {
+    var openWeatherPath = '/data/2.5/box/city?';
+    query.cluster = 'yes';
+    doListQuery(query, openWeatherPath, callback);
+  };
+
+  /**
+  * Find: current weather for in a circle from the center point
+  * @function
+  * @param {object} query - The query to be executed (Example: query = {lat:55.5, lon:37.5, cnt:10}).
+  * @param {function} callback - The function that will get called after weather retrieval.
+  * @memberOf weatherAdapter
+  */
+  exports.currentWeatherInCircle = function (query, callback) {
+    var openWeatherPath = '/data/2.5/find?';
+    doListQuery(query, openWeatherPath, callback);
+  };
+
+  var http = require('http');
+  var weatherConfig = {
+    host: 'api.openweathermap.org',
+    port: 80,
+    withCredentials: false
+  };
+  var weatherImgBasePath = 'http://openweathermap.org/img/w/';
+  var appId = config.openweathermap.appid;
+
+  function doListQuery(query, openWeatherPath, callback) {
+    query.units = 'metric';
+    query.appId = appId;
+    openWeatherPath += buildQueryFromObject(query);
+    weatherConfig.path = openWeatherPath;
+    getWeather(weatherConfig, function onSuccess(response) {
+      var list = response.list;
+      var currentIndex = list.length;
+      var listItem;
+
+      while (currentIndex--) {
+        listItem = list[currentIndex];
+        listItem.weather[0].iconUrl = weatherImgBasePath + listItem.weather[0].icon + '.png';
+      }
+
+      callback(response);
+    }, function onError(error) {
+      callback(error);
+    });
+  };
+
+  function buildQueryFromObject(jsObject) {
+    var value;
+    var query = '';
+
+    for (var key in jsObject) {
+      value = jsObject[key];
+      query += key + '=' + value + '&amp;';
+    }
+
+    return query.slice(0, -1);
+  };
+
+  function getWeather(weatherRequest, successFn, errorFn) {
+    return http.get(weatherRequest, function (weatherResponse) {
+      var tempBuffer = '';
+
+      weatherResponse.on('data', function (data) {
+        return tempBuffer += data;
+      });
+
+      weatherResponse.on('error', function (error) {
+        return errorFn(error);
+      });
+
+      return weatherResponse.on('end', function () {
+        var response;
+
+        try {
+          response = JSON.parse(tempBuffer);
+        } catch (exception) {
+          return errorFn(exception);
+        }
+
+        if (response.list == null) {
+          response.list = [];
+        }
+
+        return successFn(response);
+      });
+    });
+  }
+})();
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-authenticationController.html">authenticationController</a></li><li><a href="module-placesController.html">placesController</a></li><li><a href="module-routes.html">routes</a></li><li><a href="module-usersController.html">usersController</a></li><li><a href="module-weatherController.html">weatherController</a></li></ul><h3>Classes</h3><ul><li><a href="module-authenticationController.html">authenticationController</a></li><li><a href="module-placesController.html">placesController</a></li><li><a href="module-routes.html">routes</a></li><li><a href="module-usersController.html">usersController</a></li><li><a href="module-weatherController.html">weatherController</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sat Feb 06 2016 09:48:37 GMT+0200 (EET)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
