@@ -12,11 +12,11 @@ $ vim config/settings-local.js # enter your configuration settings
 $ node server.js # open http://127.0.0.1:4000/ in your browser, and voilà
 ```
 
-### (Documentation)[http://cdog.github.io/touristinfo/]
+### [Documentation](http://cdog.github.io/touristinfo/)
 
 ```
-$ grunt jsdoc # builds docs locally
-$ grunt docs # builds and pushes the docs to gh-pages branch
+$ grunt jsdoc # build docs (local)
+$ grunt docs # build and push docs to gh-pages branch
 ```
 
 ### Available grunt tasks
