@@ -1,7 +1,10 @@
 module.exports = function (grunt) {
   'use strict';
 
-  require('jit-grunt')(grunt);
+  require('jit-grunt')(grunt, {
+    buildcontrol: 'grunt-build-control'
+  });
+
   require('time-grunt')(grunt);
 
   grunt.initConfig({
@@ -143,16 +146,29 @@ module.exports = function (grunt) {
         tasks: 'css'
       }
     },
-    clean: {
-      assets: 'public/assets'
-    },
     jsdoc: {
       dist: {
         src: ['app/**/*.js'],
         options: {
-          destination: 'doc'
+          destination: 'docs'
         }
       }
+    },
+    buildcontrol: {
+      options: {
+        commit: true,
+        push: true
+      },
+      pages: {
+        options: {
+          remote: 'git@github.com:cdog/gh-pages-boilerplate.git',
+          branch: 'gh-pages'
+        }
+      }
+    },
+    clean: {
+      assets: 'public/assets',
+      docs: 'docs'
     }
   });
 
@@ -160,7 +176,7 @@ module.exports = function (grunt) {
   grunt.registerTask('css', ['less', 'postcss', 'csscomb', 'csslint', 'cssmin']);
   grunt.registerTask('js', ['eslint', 'jscs', 'concat', 'uglify']);
   grunt.registerTask('build', ['assets', 'css', 'js']);
-  grunt.registerTask('test', ['clean', 'build']);
-  grunt.registerTask('docs', 'jsdoc');
+  grunt.registerTask('test', ['clean:assets', 'build']);
+  grunt.registerTask('docs', ['clean:docs', 'jsdoc', 'buildcontrol']);
   grunt.registerTask('default', 'build');
 };

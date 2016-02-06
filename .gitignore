@@ -7,6 +7,9 @@
 # MongoDB stored data
 /db
 
+# Docs generated files
+/docs
+
 # OS generated files
 ._*
 .DS_Store
@@ -26,4 +29,3 @@ Thumbs.db
 # Folders to ignore
 bower_components
 node_modules
-doc

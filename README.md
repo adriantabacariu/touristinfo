@@ -16,6 +16,6 @@ $ node server.js # open http://127.0.0.1:4000/ in your browser, and voilà
 
 * build _(default)_
 * clean
+* docs
 * test
 * watch
-* docs
